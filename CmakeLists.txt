@@ -1,0 +1,51 @@
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+project(dxowl VERSION 0.4.0 LANGUAGES CXX)
+
+add_library(dxowl INTERFACE)
+add_library(dxowl::dxowl ALIAS dxowl)
+
+target_include_directories(dxowl
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+
+include(GNUInstallDirs)
+
+install(DIRECTORY include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(TARGETS dxowl EXPORT dxowlTargets)
+
+install(EXPORT dxowlTargets
+  FILE dxowlConfig.cmake
+  NAMESPACE dxowl::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/dxowl)
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/dxowlConfigVersion.cmake
+  VERSION ${PACKAGE_VERSION}
+  COMPATIBILITY SameMinorVersion)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/dxowlConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/dxowl)
+
+export(TARGETS dxowl NAMESPACE dxowl:: FILE dxowlConfig.cmake)
+
+# Show files in Visual Studio.
+if (MSVC)
+  # Find files.
+  file(GLOB_RECURSE header_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
+
+  # Generate new fake target with underscore suffix to show files.
+  add_custom_target(${PROJECT_NAME}_ SOURCES ${header_files})
+
+  # Enable folders and set fake target as default project.
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME}_)
+endif ()
