@@ -7,7 +7,9 @@
 #ifndef Buffer_hpp
 #define Buffer_hpp
 
+#include <d3d11.h>
 #include <memory>
+#include <wrl.h>
 
 namespace dxowl
 {
@@ -19,7 +21,7 @@ namespace dxowl
 
         template <typename Container>
         Buffer(
-            ID3D11Device4 *d3d11_device,
+            ID3D11Device* d3d11_device,
             D3D11_BUFFER_DESC const &buffer_desc,
             Container const &datastorage)
             : m_buffer(nullptr), m_descriptor(buffer_desc)
