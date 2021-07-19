@@ -7,7 +7,7 @@
 #ifndef Mesh_hpp
 #define Mesh_hpp
 
-#include <d3d11.h>
+#include <d3d11_4.h>
 #include <memory>
 #include <vector>
 #include <wrl.h>
@@ -22,7 +22,7 @@ namespace dxowl
     public:
         template <typename VertexPtr, typename IndexPtr>
         Mesh(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             std::vector<VertexPtr> const &vertex_data,
             std::vector<size_t> const &vertex_data_byte_sizes,
             IndexPtr const index_data,
@@ -33,7 +33,7 @@ namespace dxowl
 
         template <typename VertexContainer, typename IndexContainer>
         Mesh(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             std::vector<VertexContainer> const &vertex_data,
             IndexContainer const &index_data,
             VertexDescriptor const &vertex_descriptor,
@@ -49,19 +49,19 @@ namespace dxowl
 
         template <typename VertexContainer>
         void loadVertexSubData(
-            ID3D11DeviceContext* d3d11_ctx,
+            ID3D11DeviceContext4* d3d11_ctx,
             size_t vertex_buffer_idx,
             size_t byte_offset,
             VertexContainer const &vertices);
 
         template <typename IndexContainer>
         void loadIndexSubdata(
-            ID3D11DeviceContext* d3d11_ctx,
+            ID3D11DeviceContext4* d3d11_ctx,
             size_t byte_offset,
             IndexContainer const &indices);
 
-        void setVertexBuffers(ID3D11DeviceContext* d3d11_ctx, UINT const base_vertex);
-        void setIndexBuffer(ID3D11DeviceContext* d3d11_ctx, UINT const first_index);
+        void setVertexBuffers(ID3D11DeviceContext4* d3d11_ctx, UINT const base_vertex);
+        void setIndexBuffer(ID3D11DeviceContext4* d3d11_ctx, UINT const first_index);
 
         size_t getVertexBufferByteSize(size_t const idx) const;
         size_t getIndexBufferByteSize() const;
@@ -96,7 +96,7 @@ namespace dxowl
 
     template <typename VertexPtr, typename IndexPtr>
     Mesh::Mesh(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         std::vector<VertexPtr> const &vertex_data,
         std::vector<size_t> const &vertex_data_byte_sizes,
         IndexPtr const index_data,
@@ -148,7 +148,7 @@ namespace dxowl
 
     template <typename VertexContainer, typename IndexContainer>
     Mesh::Mesh(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         std::vector<VertexContainer> const &vertex_data,
         IndexContainer const &index_data,
         VertexDescriptor const &vertex_descriptor,
@@ -158,7 +158,7 @@ namespace dxowl
         // Create vertex buffers from data
         m_vertex_buffers.reserve(vertex_data.size());
 
-        for (auto &vb_data : vertices)
+        for (auto &vb_data : vertex_data)
         {
             m_vertex_buffers.push_back(nullptr);
 
@@ -167,7 +167,7 @@ namespace dxowl
             vertexBufferData.SysMemPitch = 0;
             vertexBufferData.SysMemSlicePitch = 0;
             const CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(VertexContainer::value_type) * vb_data.size(), D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
-            DX::ThrowIfFailed(
+            winrt::check_hresult(
                 d3d11_device->CreateBuffer(
                     &vertexBufferDesc,
                     &vertexBufferData,
@@ -179,7 +179,7 @@ namespace dxowl
 
     template <typename VertexContainer>
     inline void Mesh::loadVertexSubData(
-        ID3D11DeviceContext* d3d11_ctx,
+        ID3D11DeviceContext4* d3d11_ctx,
         size_t vertex_buffer_idx,
         size_t byte_offset,
         VertexContainer const &vertices)
@@ -210,7 +210,7 @@ namespace dxowl
 
     template <typename IndexContainer>
     inline void Mesh::loadIndexSubdata(
-        ID3D11DeviceContext* d3d11_ctx,
+        ID3D11DeviceContext4* d3d11_ctx,
         size_t byte_offset,
         IndexContainer const &indices)
     {
@@ -238,7 +238,7 @@ namespace dxowl
         d3d11_ctx->Unmap(m_index_buffer.Get(), 0);
     }
 
-    inline void Mesh::setVertexBuffers(ID3D11DeviceContext* d3d11_ctx, UINT const base_vertex)
+    inline void Mesh::setVertexBuffers(ID3D11DeviceContext4* d3d11_ctx, UINT const base_vertex)
     {
         auto vbs = unpack(m_vertex_buffers);
 
@@ -259,7 +259,7 @@ namespace dxowl
             offsets.data());
     }
 
-    inline void Mesh::setIndexBuffer(ID3D11DeviceContext* d3d11_ctx, UINT first_index)
+    inline void Mesh::setIndexBuffer(ID3D11DeviceContext4* d3d11_ctx, UINT first_index)
     {
         UINT offset = computeByteSize(m_index_format) * first_index;
 

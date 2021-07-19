@@ -16,21 +16,21 @@ namespace dxowl
     public:
         template <typename TexelDataContainer>
         Texture2D(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             TexelDataContainer const &data,
             D3D11_TEXTURE2D_DESC const &desc,
             D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view);
 
         template <typename TexelDataContainer>
         Texture2D(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             std::vector<TexelDataContainer> const &data,
             D3D11_TEXTURE2D_DESC const &desc,
             D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view);
 
         template <typename TexelDataPtr>
         Texture2D(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             std::vector<TexelDataPtr> const &data,
             std::vector<size_t> const &data_byte_sizes,
             D3D11_TEXTURE2D_DESC const &desc,
@@ -56,7 +56,7 @@ namespace dxowl
 
     template <typename TexelDataContainer>
     inline Texture2D::Texture2D(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         TexelDataContainer const &data,
         D3D11_TEXTURE2D_DESC const &desc,
         D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view)
@@ -71,7 +71,7 @@ namespace dxowl
 
     template <typename TexelDataContainer>
     inline Texture2D::Texture2D(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         std::vector<TexelDataContainer> const &data,
         D3D11_TEXTURE2D_DESC const &desc,
         D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view)
@@ -101,7 +101,7 @@ namespace dxowl
 
     template <typename TexelDataPtr>
     inline Texture2D::Texture2D(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         std::vector<TexelDataPtr> const &data,
         std::vector<size_t> const &data_byte_sizes,
         D3D11_TEXTURE2D_DESC const &desc,

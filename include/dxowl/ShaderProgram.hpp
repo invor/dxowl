@@ -25,13 +25,13 @@ namespace dxowl
 
         template <typename ShaderFileDataContainer>
         ShaderProgram(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             VertexDescriptor vertex_desc,
             ShaderFileDataContainer vertex_shader,
             ShaderFileDataContainer geometry_shader,
             ShaderFileDataContainer pixel_shader);
         ShaderProgram(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             VertexDescriptor vertex_desc,
             void const *vertex_shader,
             size_t vertex_shader_byteSize,
@@ -46,10 +46,10 @@ namespace dxowl
         ShaderProgram &operator=(ShaderProgram &&rhs) = delete;
         ShaderProgram &operator=(const ShaderProgram &rhs) = delete;
 
-        void setInputLayout(ID3D11DeviceContext* d3d11_ctx);
-        void setVertexShader(ID3D11DeviceContext* d3d11_ctx);
-        void setGeometryShader(ID3D11DeviceContext* d3d11_ctx);
-        void setPixelShader(ID3D11DeviceContext* d3d11_ctx);
+        void setInputLayout(ID3D11DeviceContext4* d3d11_ctx);
+        void setVertexShader(ID3D11DeviceContext4* d3d11_ctx);
+        void setGeometryShader(ID3D11DeviceContext4* d3d11_ctx);
+        void setPixelShader(ID3D11DeviceContext4* d3d11_ctx);
 
     private:
         Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
@@ -60,7 +60,7 @@ namespace dxowl
 
     template <typename ShaderFileDataContainer>
     ShaderProgram::ShaderProgram(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         VertexDescriptor vertex_desc,
         ShaderFileDataContainer vertex_shader,
         ShaderFileDataContainer geometry_shader,
@@ -101,7 +101,7 @@ namespace dxowl
     }
 
     inline ShaderProgram::ShaderProgram(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         VertexDescriptor vertex_desc,
         void const *vertex_shader,
         size_t vertex_shader_byteSize,
@@ -144,12 +144,12 @@ namespace dxowl
         }
     }
 
-    inline void ShaderProgram::setInputLayout(ID3D11DeviceContext* d3d11_ctx)
+    inline void ShaderProgram::setInputLayout(ID3D11DeviceContext4* d3d11_ctx)
     {
         d3d11_ctx->IASetInputLayout(m_inputLayout.Get());
     }
 
-    inline void ShaderProgram::setVertexShader(ID3D11DeviceContext* d3d11_ctx)
+    inline void ShaderProgram::setVertexShader(ID3D11DeviceContext4* d3d11_ctx)
     {
         d3d11_ctx->VSSetShader(
             m_vertexShader.Get(),
@@ -157,7 +157,7 @@ namespace dxowl
             0);
     }
 
-    inline void ShaderProgram::setGeometryShader(ID3D11DeviceContext* d3d11_ctx)
+    inline void ShaderProgram::setGeometryShader(ID3D11DeviceContext4* d3d11_ctx)
     {
         if (m_geometryShader != nullptr)
         {
@@ -168,7 +168,7 @@ namespace dxowl
         }
     }
 
-    inline void ShaderProgram::setPixelShader(ID3D11DeviceContext* d3d11_ctx)
+    inline void ShaderProgram::setPixelShader(ID3D11DeviceContext4* d3d11_ctx)
     {
         d3d11_ctx->PSSetShader(
             m_pixelShader.Get(),

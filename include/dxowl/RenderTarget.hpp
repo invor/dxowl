@@ -15,7 +15,7 @@ namespace dxowl
     {
     public:
         RenderTarget(
-            ID3D11Device* d3d11_device,
+            ID3D11Device4* d3d11_device,
             D3D11_TEXTURE2D_DESC const &desc,
             D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
             D3D11_RENDER_TARGET_VIEW_DESC const &rndr_tgt_view);
@@ -29,7 +29,7 @@ namespace dxowl
     };
 
     inline RenderTarget::RenderTarget(
-        ID3D11Device* d3d11_device,
+        ID3D11Device4* d3d11_device,
         D3D11_TEXTURE2D_DESC const &desc,
         D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
         D3D11_RENDER_TARGET_VIEW_DESC const &rndr_tgt_view)
