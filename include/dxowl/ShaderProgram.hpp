@@ -26,13 +26,13 @@ namespace dxowl
         template <typename ShaderFileDataContainer>
         ShaderProgram(
             ID3D11Device4* d3d11_device,
-            VertexDescriptor vertex_desc,
+            std::vector<VertexDescriptor> vertex_desc,
             ShaderFileDataContainer vertex_shader,
             ShaderFileDataContainer geometry_shader,
             ShaderFileDataContainer pixel_shader);
         ShaderProgram(
             ID3D11Device4* d3d11_device,
-            VertexDescriptor vertex_desc,
+            std::vector<VertexDescriptor> vertex_desc,
             void const *vertex_shader,
             size_t vertex_shader_byteSize,
             void const *geometry_shader,
@@ -61,7 +61,7 @@ namespace dxowl
     template <typename ShaderFileDataContainer>
     ShaderProgram::ShaderProgram(
         ID3D11Device4* d3d11_device,
-        VertexDescriptor vertex_desc,
+        std::vector<VertexDescriptor> vertex_desc,
         ShaderFileDataContainer vertex_shader,
         ShaderFileDataContainer geometry_shader,
         ShaderFileDataContainer pixel_shader)
@@ -74,10 +74,14 @@ namespace dxowl
                 nullptr,
                 &m_vertexShader));
 
+        std::vector<D3D11_INPUT_ELEMENT_DESC> attributes;
+        for (auto& vl : vertex_desc) {
+            attributes.insert(std::end(attributes), std::begin(vl.attributes), std::end(vl.attributes));
+        }
         winrt::check_hresult(
             d3d11_device->CreateInputLayout(
-                vertex_desc.attributes.data(),
-                static_cast<UINT>(vertex_desc.attributes.size()),
+                attributes.data(),
+                static_cast<UINT>(attributes.size()),
                 vertex_shader.data(),
                 static_cast<UINT>(vertex_shader.size()),
                 &m_inputLayout));
@@ -102,7 +106,7 @@ namespace dxowl
 
     inline ShaderProgram::ShaderProgram(
         ID3D11Device4* d3d11_device,
-        VertexDescriptor vertex_desc,
+        std::vector<VertexDescriptor> vertex_desc,
         void const *vertex_shader,
         size_t vertex_shader_byteSize,
         void const *geometry_shader,
@@ -118,10 +122,14 @@ namespace dxowl
                 nullptr,
                 &m_vertexShader));
 
+        std::vector<D3D11_INPUT_ELEMENT_DESC> attributes;
+        for (auto& vl : vertex_desc) {
+            attributes.insert(std::end(attributes), std::begin(vl.attributes), std::end(vl.attributes));
+        }
         winrt::check_hresult(
             d3d11_device->CreateInputLayout(
-                vertex_desc.attributes.data(),
-                static_cast<UINT>(vertex_desc.attributes.size()),
+                attributes.data(),
+                static_cast<UINT>(attributes.size()),
                 vertex_shader,
                 static_cast<UINT>(vertex_shader_byteSize),
                 &m_inputLayout));

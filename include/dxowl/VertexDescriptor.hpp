@@ -15,18 +15,16 @@ namespace dxowl
     {
         bool operator==(VertexDescriptor const &rhs) const;
 
+        size_t stride;
         std::vector<D3D11_INPUT_ELEMENT_DESC> attributes;
-        std::vector<size_t> strides;
     };
 
     inline bool VertexDescriptor::operator==(VertexDescriptor const &rhs) const
     {
         bool retval = false;
 
-        retval = retval || strides.size() == rhs.strides.size();
+        retval = retval || stride == rhs.stride;
         retval = retval && attributes.size() == rhs.attributes.size();
-
-        retval = retval && memcmp(strides.data(), rhs.strides.data(), strides.size() * sizeof(size_t)) == 0;
         retval = retval && memcmp(attributes.data(), rhs.attributes.data(), attributes.size() * sizeof(D3D11_INPUT_ELEMENT_DESC)) == 0;
 
         return retval;

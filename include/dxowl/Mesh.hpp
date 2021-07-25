@@ -27,7 +27,7 @@ namespace dxowl
             std::vector<size_t> const &vertex_data_byte_sizes,
             IndexPtr const index_data,
             size_t const index_data_byte_size,
-            VertexDescriptor const &vertex_descriptor,
+            std::vector<VertexDescriptor> const &vertex_descriptor,
             DXGI_FORMAT const index_type,
             D3D_PRIMITIVE_TOPOLOGY const primitive_type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -36,7 +36,7 @@ namespace dxowl
             ID3D11Device4* d3d11_device,
             std::vector<VertexContainer> const &vertex_data,
             IndexContainer const &index_data,
-            VertexDescriptor const &vertex_descriptor,
+            std::vector<VertexDescriptor> const &vertex_descriptor,
             DXGI_FORMAT const index_type,
             D3D_PRIMITIVE_TOPOLOGY const primitive_type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -65,7 +65,7 @@ namespace dxowl
 
         size_t getVertexBufferByteSize(size_t const idx) const;
         size_t getIndexBufferByteSize() const;
-        VertexDescriptor getVertexLayout() const;
+        std::vector<VertexDescriptor> getVertexLayout() const;
         DXGI_FORMAT getIndexFormat() const;
         D3D_PRIMITIVE_TOPOLOGY getPrimitiveTopology() const;
 
@@ -77,7 +77,7 @@ namespace dxowl
         BufferPtr m_index_buffer;
         D3D11_BUFFER_DESC m_ib_descriptor;
 
-        VertexDescriptor m_vertex_layout;
+        std::vector<VertexDescriptor> m_vertex_layout;
         DXGI_FORMAT m_index_format;
         D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 
@@ -101,7 +101,7 @@ namespace dxowl
         std::vector<size_t> const &vertex_data_byte_sizes,
         IndexPtr const index_data,
         size_t const index_data_byte_size,
-        VertexDescriptor const &vertex_descriptor,
+        std::vector<VertexDescriptor> const &vertex_descriptor,
         DXGI_FORMAT const index_type,
         D3D_PRIMITIVE_TOPOLOGY const primitive_type)
     {
@@ -151,7 +151,7 @@ namespace dxowl
         ID3D11Device4* d3d11_device,
         std::vector<VertexContainer> const &vertex_data,
         IndexContainer const &index_data,
-        VertexDescriptor const &vertex_descriptor,
+        std::vector<VertexDescriptor> const &vertex_descriptor,
         DXGI_FORMAT const index_type,
         D3D_PRIMITIVE_TOPOLOGY const primitive_typ)
     {
@@ -245,10 +245,11 @@ namespace dxowl
         std::vector<UINT> strides;
         std::vector<UINT> offsets;
         strides.reserve(vbs.size());
-        for (auto &s : m_vertex_layout.strides)
+        offsets.reserve(vbs.size());
+        for (auto &vl : m_vertex_layout)
         {
-            strides.push_back(s);
-            offsets.push_back(base_vertex * s);
+            strides.push_back(vl.stride);
+            offsets.push_back(base_vertex * vl.stride);
         }
 
         d3d11_ctx->IASetVertexBuffers(
@@ -283,7 +284,7 @@ namespace dxowl
         return m_ib_descriptor.ByteWidth;
     }
 
-    inline VertexDescriptor Mesh::getVertexLayout() const
+    inline std::vector<VertexDescriptor> Mesh::getVertexLayout() const
     {
         return m_vertex_layout;
     }
