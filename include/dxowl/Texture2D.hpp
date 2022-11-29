@@ -19,22 +19,16 @@ namespace dxowl
             ID3D11Device4* d3d11_device,
             TexelDataContainer const &data,
             D3D11_TEXTURE2D_DESC const &desc,
-            D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view);
-
-        template <typename TexelDataContainer>
-        Texture2D(
-            ID3D11Device4* d3d11_device,
-            std::vector<TexelDataContainer> const &data,
-            D3D11_TEXTURE2D_DESC const &desc,
-            D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view);
+            D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
+            bool generate_mipmap = false);
 
         template <typename TexelDataPtr>
         Texture2D(
             ID3D11Device4* d3d11_device,
             std::vector<TexelDataPtr> const &data,
-            std::vector<size_t> const &data_byte_sizes,
             D3D11_TEXTURE2D_DESC const &desc,
-            D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view);
+            D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
+            bool generate_mipmap = false);
 
         ~Texture2D(){}; //TODO
 
@@ -59,53 +53,24 @@ namespace dxowl
         ID3D11Device4* d3d11_device,
         TexelDataContainer const &data,
         D3D11_TEXTURE2D_DESC const &desc,
-        D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view)
+        D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
+        bool generate_mipmap)
         : Texture2D(
               d3d11_device,
               {data.data()},
-              {data.size() * sizeof(TexelDataContainer::value_type)},
               desc,
-              shdr_rsrc_view)
+              shdr_rsrc_view,
+              generate_mipmap)
     {
-    }
-
-    template <typename TexelDataContainer>
-    inline Texture2D::Texture2D(
-        ID3D11Device4* d3d11_device,
-        std::vector<TexelDataContainer> const &data,
-        D3D11_TEXTURE2D_DESC const &desc,
-        D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view)
-        : m_desc(desc), m_shdr_rsrc_view_desc(shdr_rsrc_view)
-    {
-        std::vector<D3D11_SUBRESOURCE_DATA> pData(data.size());
-
-        for (size_t i = 0; i < data.size(); ++i)
-        {
-            ZeroMemory(&pData[i], sizeof(D3D11_SUBRESOURCE_DATA));
-
-            pData[i].pSysMem = data[i].data();
-            pData[i].SysMemPitch = desc.Width * static_cast<UINT>(computeByteSize(desc.Format));
-            pData[i].SysMemSlicePitch = 0;
-        }
-
-        HRESULT hr = d3d11_device->CreateTexture2D(
-            &m_desc,
-            pData.size() > 0 ? pData.data() : nullptr,
-            &m_texture);
-
-        hr = d3d11_device->CreateShaderResourceView(
-            m_texture.Get(),
-            &m_shdr_rsrc_view_desc,
-            m_shdr_rsrc_view.GetAddressOf());
     }
 
     template <typename TexelDataPtr>
     inline Texture2D::Texture2D(
         ID3D11Device4* d3d11_device,
         std::vector<TexelDataPtr> const &data,
-        std::vector<size_t> const &data_byte_sizes,
         D3D11_TEXTURE2D_DESC const &desc,
-        D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view)
+        D3D11_SHADER_RESOURCE_VIEW_DESC const &shdr_rsrc_view,
+        bool generate_mipmap)
         : m_desc(desc), m_shdr_rsrc_view_desc(shdr_rsrc_view)
     {
         std::vector<D3D11_SUBRESOURCE_DATA> pData(data.size());
@@ -128,6 +93,14 @@ namespace dxowl
             m_texture.Get(),
             &m_shdr_rsrc_view_desc,
             m_shdr_rsrc_view.GetAddressOf());
+
+        if (generate_mipmap) {
+            Microsoft::WRL::ComPtr<ID3D11DeviceContext> ctx;
+            d3d11_device->GetImmediateContext(ctx.GetAddressOf());
+
+            // generate mipmap if requested using device context
+            ctx->GenerateMips(m_shdr_rsrc_view.Get());
+        }
 
         //TODO do something with hr
     }
