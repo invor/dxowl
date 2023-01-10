@@ -32,7 +32,12 @@ namespace dxowl
 
         ~Texture2D(){}; //TODO
 
-        inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getShaderResourceView()
+        inline D3D11_TEXTURE2D_DESC getTextureDesc() const
+        {
+            return m_desc;
+        }
+
+        inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> getShaderResourceView() const
         {
             return m_shdr_rsrc_view;
         }

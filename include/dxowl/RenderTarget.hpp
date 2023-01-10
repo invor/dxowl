@@ -21,6 +21,11 @@ namespace dxowl
             D3D11_RENDER_TARGET_VIEW_DESC const &rndr_tgt_view);
         ~RenderTarget(){};
 
+        inline Microsoft::WRL::ComPtr<ID3D11RenderTargetView> getRenderTargetView() const
+        {
+            return m_rndr_tgt_view;
+        }
+
     private:
         typedef Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTargetPtr;
 
