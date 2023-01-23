@@ -21,11 +21,25 @@ namespace dxowl
 
     inline bool VertexDescriptor::operator==(VertexDescriptor const &rhs) const
     {
-        bool retval = false;
+        bool retval = stride == rhs.stride;
 
-        retval = retval || stride == rhs.stride;
-        retval = retval && attributes.size() == rhs.attributes.size();
-        retval = retval && memcmp(attributes.data(), rhs.attributes.data(), attributes.size() * sizeof(D3D11_INPUT_ELEMENT_DESC)) == 0;
+        if (attributes.size() == rhs.attributes.size())
+        {
+            for (int i = 0; i < attributes.size(); ++i)
+            {
+                retval = retval && attributes[i].AlignedByteOffset == rhs.attributes[i].AlignedByteOffset;
+                retval = retval && attributes[i].Format == rhs.attributes[i].Format;
+                retval = retval && attributes[i].InputSlot == rhs.attributes[i].InputSlot;
+                retval = retval && attributes[i].InputSlotClass == rhs.attributes[i].InputSlotClass;
+                retval = retval && attributes[i].InstanceDataStepRate == rhs.attributes[i].InstanceDataStepRate;
+                retval = retval && attributes[i].SemanticIndex == rhs.attributes[i].SemanticIndex;
+                retval = retval && attributes[i].SemanticName == rhs.attributes[i].SemanticName;
+            }
+        }
+        else
+        {
+            retval = false;
+        }
 
         return retval;
     }
