@@ -185,20 +185,20 @@ namespace dxowl
         VertexContainer const &vertices)
     {
         //const D3D11_BOX sDstBox = {
-        //	byte_offset,
-        //	0U,
-        //	0U,
-        //	byte_offset + (vertices.size() * sizeof(VertexContainer::value_type)),
-        //	1U,
-        //	1U };
+        //    byte_offset,
+        //    0U,
+        //    0U,
+        //    byte_offset + (vertices.size() * sizeof(VertexContainer::value_type)),
+        //    1U,
+        //    1U };
 
         //d3d11_ctx->UpdateSubresource(
-        //	m_vertex_buffers[vertex_buffer_idx].Get(),
-        //	0,
-        //	&sDstBox,
-        //	vertices.data(),
-        //	0,
-        //	0);
+        //    m_vertex_buffers[vertex_buffer_idx].Get(),
+        //    0,
+        //    &sDstBox,
+        //    vertices.data(),
+        //    0,
+        //    0);
 
         D3D11_MAPPED_SUBRESOURCE map;
 
@@ -215,20 +215,20 @@ namespace dxowl
         IndexContainer const &indices)
     {
         //const D3D11_BOX sDstBox = {
-        //	byte_offset,
-        //	0U,
-        //	0U,
-        //	byte_offset + (indices.size() * sizeof(IndexContainer::value_type)),
-        //	1U,
-        //	1U };
+        //    byte_offset,
+        //    0U,
+        //    0U,
+        //    byte_offset + (indices.size() * sizeof(IndexContainer::value_type)),
+        //    1U,
+        //    1U };
         //
         //d3d11_ctx->UpdateSubresource(
-        //	m_index_buffer.Get(),
-        //	0,
-        //	&sDstBox,
-        //	indices.data(),
-        //	0,
-        //	0);
+        //    m_index_buffer.Get(),
+        //    0,
+        //    &sDstBox,
+        //    indices.data(),
+        //    0,
+        //    0);
 
         D3D11_MAPPED_SUBRESOURCE map;
 
