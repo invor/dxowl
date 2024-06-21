@@ -42,6 +42,10 @@ namespace dxowl
             return m_shdr_rsrc_view;
         }
 
+        inline Microsoft::WRL::ComPtr<ID3D11Texture2D> getTexture() const {
+            return m_texture;
+        }
+
     protected:
         typedef Microsoft::WRL::ComPtr<ID3D11Texture2D> TexturePtr;
         typedef Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceViewPtr;
