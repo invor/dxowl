@@ -22,10 +22,22 @@ namespace dxowl
         template <typename Container>
         Buffer(
             ID3D11Device4* d3d11_device,
-            D3D11_BUFFER_DESC const &buffer_desc,
-            Container const &datastorage)
+            D3D11_BUFFER_DESC const& buffer_desc,
+            Container const& datastorage)
             : m_buffer(nullptr), m_descriptor(buffer_desc)
         {
+            size_t byte_size = datastorage.size() * sizeof(decltype(datastorage)::value_type);
+
+            if (byte_size > 0)
+            {
+                D3D11_SUBRESOURCE_DATA init_data;
+                init_data.pSysMem = datastorage.data();
+                return d3d11_device->CreateBuffer(&m_descriptor, &init_data, &m_buffer);
+            }
+            else
+            {
+                return d3d11_device->CreateBuffer(&m_descriptor, nullptr, &m_buffer);
+            }
         }
 
         ~Buffer() = default;
