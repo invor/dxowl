@@ -23,42 +23,42 @@ namespace dxowl
         template <typename VertexPtr, typename IndexPtr>
         Mesh(
             ID3D11Device4* d3d11_device,
-            std::vector<VertexPtr> const &vertex_data,
-            std::vector<size_t> const &vertex_data_byte_sizes,
+            std::vector<VertexPtr> const& vertex_data,
+            std::vector<size_t> const& vertex_data_byte_sizes,
             IndexPtr const index_data,
             size_t const index_data_byte_size,
-            std::vector<VertexDescriptor> const &vertex_descriptor,
+            std::vector<VertexDescriptor> const& vertex_descriptor,
             DXGI_FORMAT const index_type,
             D3D_PRIMITIVE_TOPOLOGY const primitive_type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         template <typename VertexContainer, typename IndexContainer>
         Mesh(
             ID3D11Device4* d3d11_device,
-            std::vector<VertexContainer> const &vertex_data,
-            IndexContainer const &index_data,
-            std::vector<VertexDescriptor> const &vertex_descriptor,
+            std::vector<VertexContainer> const& vertex_data,
+            IndexContainer const& index_data,
+            std::vector<VertexDescriptor> const& vertex_descriptor,
             DXGI_FORMAT const index_type,
             D3D_PRIMITIVE_TOPOLOGY const primitive_type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         ~Mesh() = default;
 
-        Mesh(const Mesh &cpy) = delete;
-        Mesh(Mesh &&other) = delete;
-        Mesh &operator=(Mesh &&rhs) = delete;
-        Mesh &operator=(const Mesh &rhs) = delete;
+        Mesh(const Mesh& cpy) = delete;
+        Mesh(Mesh&& other) = delete;
+        Mesh& operator=(Mesh&& rhs) = delete;
+        Mesh& operator=(const Mesh& rhs) = delete;
 
         template <typename VertexContainer>
         void loadVertexSubData(
             ID3D11DeviceContext4* d3d11_ctx,
             size_t vertex_buffer_idx,
             size_t byte_offset,
-            VertexContainer const &vertices);
+            VertexContainer const& vertices);
 
         template <typename IndexContainer>
         void loadIndexSubdata(
             ID3D11DeviceContext4* d3d11_ctx,
             size_t byte_offset,
-            IndexContainer const &indices);
+            IndexContainer const& indices);
 
         void setVertexBuffers(ID3D11DeviceContext4* d3d11_ctx, UINT const base_vertex);
         void setIndexBuffer(ID3D11DeviceContext4* d3d11_ctx, UINT const first_index);
@@ -82,13 +82,13 @@ namespace dxowl
         D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 
         template <class T>
-        static inline std::vector<T *> unpack(
-            std::vector<Microsoft::WRL::ComPtr<T>> &ptrs)
+        static inline std::vector<T*> unpack(
+            std::vector<Microsoft::WRL::ComPtr<T>>& ptrs)
         {
-            std::vector<T *> retval;
+            std::vector<T*> retval;
             retval.reserve(ptrs.size());
             std::transform(ptrs.begin(), ptrs.end(), std::back_inserter(retval),
-                           [](Microsoft::WRL::ComPtr<T> &p) { return p.Get(); });
+                [](Microsoft::WRL::ComPtr<T>& p) { return p.Get(); });
 
             return retval;
         }
@@ -97,11 +97,11 @@ namespace dxowl
     template <typename VertexPtr, typename IndexPtr>
     Mesh::Mesh(
         ID3D11Device4* d3d11_device,
-        std::vector<VertexPtr> const &vertex_data,
-        std::vector<size_t> const &vertex_data_byte_sizes,
+        std::vector<VertexPtr> const& vertex_data,
+        std::vector<size_t> const& vertex_data_byte_sizes,
         IndexPtr const index_data,
         size_t const index_data_byte_size,
-        std::vector<VertexDescriptor> const &vertex_descriptor,
+        std::vector<VertexDescriptor> const& vertex_descriptor,
         DXGI_FORMAT const index_type,
         D3D_PRIMITIVE_TOPOLOGY const primitive_type)
     {
@@ -110,11 +110,11 @@ namespace dxowl
 
         for (size_t i = 0; i < m_vertex_buffers.size(); ++i)
         {
-            D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
+            D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
             vertexBufferData.pSysMem = vertex_data[i];
             vertexBufferData.SysMemPitch = 0;
             vertexBufferData.SysMemSlicePitch = 0;
-            const CD3D11_BUFFER_DESC vertexBufferDesc(vertex_data_byte_sizes[i], D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+            const CD3D11_BUFFER_DESC vertexBufferDesc(static_cast<UINT>(vertex_data_byte_sizes[i]), D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
             winrt::check_hresult(
                 d3d11_device->CreateBuffer(
                     &vertexBufferDesc,
@@ -124,11 +124,11 @@ namespace dxowl
         }
 
         // Create index buffer
-        D3D11_SUBRESOURCE_DATA indexBufferData = {0};
+        D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
         indexBufferData.pSysMem = index_data;
         indexBufferData.SysMemPitch = 0;
         indexBufferData.SysMemSlicePitch = 0;
-        CD3D11_BUFFER_DESC indexBufferDesc(index_data_byte_size, D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+        CD3D11_BUFFER_DESC indexBufferDesc(static_cast<UINT>(index_data_byte_size), D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
         winrt::check_hresult(
             d3d11_device->CreateBuffer(
                 &indexBufferDesc,
@@ -149,20 +149,20 @@ namespace dxowl
     template <typename VertexContainer, typename IndexContainer>
     Mesh::Mesh(
         ID3D11Device4* d3d11_device,
-        std::vector<VertexContainer> const &vertex_data,
-        IndexContainer const &index_data,
-        std::vector<VertexDescriptor> const &vertex_descriptor,
+        std::vector<VertexContainer> const& vertex_data,
+        IndexContainer const& index_data,
+        std::vector<VertexDescriptor> const& vertex_descriptor,
         DXGI_FORMAT const index_type,
         D3D_PRIMITIVE_TOPOLOGY const primitive_typ)
     {
         // Create vertex buffers from data
         m_vertex_buffers.reserve(vertex_data.size());
 
-        for (auto &vb_data : vertex_data)
+        for (auto& vb_data : vertex_data)
         {
             m_vertex_buffers.push_back(nullptr);
 
-            D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
+            D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
             vertexBufferData.pSysMem = vb_data.data();
             vertexBufferData.SysMemPitch = 0;
             vertexBufferData.SysMemSlicePitch = 0;
@@ -182,7 +182,7 @@ namespace dxowl
         ID3D11DeviceContext4* d3d11_ctx,
         size_t vertex_buffer_idx,
         size_t byte_offset,
-        VertexContainer const &vertices)
+        VertexContainer const& vertices)
     {
         //const D3D11_BOX sDstBox = {
         //    byte_offset,
@@ -203,7 +203,7 @@ namespace dxowl
         D3D11_MAPPED_SUBRESOURCE map;
 
         d3d11_ctx->Map(m_vertex_buffers[vertex_buffer_idx].Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &map);
-        auto cb = static_cast<std::byte *>(map.pData) + byte_offset;
+        auto cb = static_cast<std::byte*>(map.pData) + byte_offset;
         std::memcpy(cb, vertices.data(), vertices.size() * sizeof(VertexContainer::value_type));
         d3d11_ctx->Unmap(m_vertex_buffers[vertex_buffer_idx].Get(), 0);
     }
@@ -212,7 +212,7 @@ namespace dxowl
     inline void Mesh::loadIndexSubdata(
         ID3D11DeviceContext4* d3d11_ctx,
         size_t byte_offset,
-        IndexContainer const &indices)
+        IndexContainer const& indices)
     {
         //const D3D11_BOX sDstBox = {
         //    byte_offset,
@@ -233,7 +233,7 @@ namespace dxowl
         D3D11_MAPPED_SUBRESOURCE map;
 
         d3d11_ctx->Map(m_index_buffer.Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &map);
-        auto cb = static_cast<std::byte *>(map.pData) + byte_offset;
+        auto cb = static_cast<std::byte*>(map.pData) + byte_offset;
         std::memcpy(cb, indices.data(), indices.size() * sizeof(IndexContainer::value_type));
         d3d11_ctx->Unmap(m_index_buffer.Get(), 0);
     }
@@ -244,17 +244,17 @@ namespace dxowl
 
         std::vector<UINT> strides;
         std::vector<UINT> offsets;
-        strides.reserve(vbs.size());
-        offsets.reserve(vbs.size());
-        for (auto &vl : m_vertex_layout)
+        strides.reserve(static_cast<UINT>(vbs.size()));
+        offsets.reserve(static_cast<UINT>(vbs.size()));
+        for (auto& vl : m_vertex_layout)
         {
-            strides.push_back(vl.stride);
-            offsets.push_back(base_vertex * vl.stride);
+            strides.push_back(static_cast<UINT>(vl.stride));
+            offsets.push_back(base_vertex * static_cast<UINT>(vl.stride));
         }
 
         d3d11_ctx->IASetVertexBuffers(
             0,
-            vbs.size(),
+            static_cast<UINT>(vbs.size()),
             vbs.data(),
             strides.data(),
             offsets.data());
@@ -262,7 +262,7 @@ namespace dxowl
 
     inline void Mesh::setIndexBuffer(ID3D11DeviceContext4* d3d11_ctx, UINT first_index)
     {
-        UINT offset = computeByteSize(m_index_format) * first_index;
+        UINT offset = static_cast<UINT>(computeByteSize(m_index_format)) * first_index;
 
         d3d11_ctx->IASetIndexBuffer(
             m_index_buffer.Get(),
