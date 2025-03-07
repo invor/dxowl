@@ -7,6 +7,7 @@
 #ifndef VertexDescriptor_h
 #define VertexDescriptor_h
 
+#include <d3d11_4.h>
 #include <vector>
 
 namespace dxowl

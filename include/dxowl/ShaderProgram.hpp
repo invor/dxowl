@@ -8,6 +8,7 @@
 #define ShaderProgram_hpp
 
 #include <winrt/base.h> // winrt::check_hresult
+#include <wrl/client.h> // Microsoft::WRL::ComPtr
 
 #include "VertexDescriptor.hpp"
 
