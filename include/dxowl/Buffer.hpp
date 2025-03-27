@@ -10,6 +10,7 @@
 #include <d3d11_4.h>
 #include <memory>
 #include <wrl.h>
+#include <winrt/base.h> // winrt::check_hresult
 
 namespace dxowl
 {
@@ -29,27 +30,24 @@ namespace dxowl
         {
             size_t byte_size = datastorage.size() * sizeof(Container::value_type);
 
-            HRESULT hr;
-
             if (byte_size > 0)
             {
                 D3D11_SUBRESOURCE_DATA init_data;
                 init_data.pSysMem = datastorage.data();
-                hr = d3d11_device->CreateBuffer(&m_descriptor, &init_data, &m_buffer);
+                winrt::check_hresult(d3d11_device->CreateBuffer(&m_descriptor, &init_data, &m_buffer));
             }
             else
             {
-                hr = d3d11_device->CreateBuffer(&m_descriptor, nullptr, &m_buffer);
+                m_descriptor.ByteWidth = 16;
+                m_descriptor.StructureByteStride = 16;
+                m_shdr_rsrc_view_desc.Buffer.NumElements = 1;
+                winrt::check_hresult(d3d11_device->CreateBuffer(&m_descriptor, nullptr, &m_buffer));
             }
 
-            //TODO do something with hr
-
-            hr = d3d11_device->CreateShaderResourceView(
+            winrt::check_hresult(d3d11_device->CreateShaderResourceView(
                 m_buffer.Get(),
                 &m_shdr_rsrc_view_desc,
-                m_shdr_rsrc_view.GetAddressOf());
-
-            //TODO do something with hr
+                m_shdr_rsrc_view.GetAddressOf()));
         }
 
         ~Buffer() = default;
